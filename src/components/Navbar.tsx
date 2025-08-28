@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { HiOutlineHeart, HiOutlineShoppingBag, HiOutlineMagnifyingGlass, HiOutlineBars3 } from 'react-icons/hi2';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ThemeToggle } from './ThemeToggle';
+import { ThemeDropdown } from './ThemeDropdown';
+import { useCart } from '../store/cart';
 
 export const Navbar: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
-  const [cartCount] = useState(3); // Mock cart count
+  const { items, setIsOpen } = useCart();
+  const cartCount = items.reduce((total, item) => total + item.qty, 0);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -20,14 +22,14 @@ export const Navbar: React.FC = () => {
     <motion.header
       className={`sticky top-0 z-50 transition-all duration-300 ${
         isScrolled 
-          ? 'bg-[rgb(var(--bg)/0.75)] backdrop-blur-md supports-[backdrop-filter]:bg-[rgb(var(--bg)/0.55)] border-b border-white/10 dark:border-white/20' 
+          ? 'bg-[rgb(var(--bg)/0.75)] backdrop-blur border-b border-white/5 dark:border-white/10' 
           : 'bg-transparent'
       }`}
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.5, ease: 'easeOut' }}
     >
-      <nav className="container mx-auto px-4 md:px-6 2xl:px-8 max-w-[1200px]">
+      <nav className="container-app">
         <div className="flex items-center justify-between h-16">
           {/* Left - Mobile menu */}
           <button 
@@ -81,6 +83,7 @@ export const Navbar: React.FC = () => {
             </motion.button>
 
             <motion.button 
+              onClick={() => setIsOpen(true)}
               className="p-2 rounded-lg text-[rgb(var(--fg))] hover:bg-[rgb(var(--card))] focus-visible:ring-2 focus-visible:ring-[rgb(var(--acc))] relative"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
@@ -102,7 +105,7 @@ export const Navbar: React.FC = () => {
               </AnimatePresence>
             </motion.button>
 
-            <ThemeToggle />
+            <ThemeDropdown />
           </div>
         </div>
       </nav>

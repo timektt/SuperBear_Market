@@ -1,11 +1,19 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { HiOutlineHeart } from 'react-icons/hi2';
 
 export const Footer: React.FC = () => {
+  const [email, setEmail] = useState('');
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    console.log('Newsletter signup:', email);
+    setEmail('');
+  };
+
   return (
     <footer className="bg-[rgb(var(--card))] border-t border-gray-200 dark:border-gray-800">
-      <div className="container mx-auto px-4 md:px-6 2xl:px-8 max-w-[1200px] py-12">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+      <div className="container-app py-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Brand */}
           <div className="md:col-span-1">
             <div className="mb-4">
@@ -64,21 +72,28 @@ export const Footer: React.FC = () => {
             </ul>
           </div>
 
-          {/* Customer Service */}
+          {/* Newsletter */}
           <div>
-            <h3 className="font-semibold text-[rgb(var(--fg))] mb-4">Customer Service</h3>
-            <ul className="space-y-2 text-sm">
-              {['Track Order', 'Shipping Info', 'Return Policy', 'Privacy Policy', 'Terms of Service'].map((service) => (
-                <li key={service}>
-                  <a 
-                    href="#" 
-                    className="text-[rgb(var(--muted))] hover:text-[rgb(var(--fg))] transition-colors"
-                  >
-                    {service}
-                  </a>
-                </li>
-              ))}
-            </ul>
+            <h3 className="font-semibold text-[rgb(var(--fg))] mb-4">Newsletter</h3>
+            <p className="text-sm text-[rgb(var(--muted))] mb-4">
+              Subscribe for updates and exclusive offers
+            </p>
+            <form onSubmit={handleSubmit} className="space-y-2">
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Enter your email"
+                className="w-full px-3 py-2 text-sm rounded-lg bg-[rgb(var(--bg))] border border-gray-300 dark:border-gray-700 text-[rgb(var(--fg))] placeholder-[rgb(var(--muted))] focus:ring-2 focus:ring-[rgb(var(--acc))] focus:border-transparent"
+                required
+              />
+              <button
+                type="submit"
+                className="w-full px-3 py-2 text-sm bg-[rgb(var(--acc))] text-white rounded-lg hover:opacity-90 transition-opacity"
+              >
+                Subscribe
+              </button>
+            </form>
           </div>
         </div>
 

@@ -1,5 +1,3 @@
-import clsx from 'clsx';
-
-export function cn(...classes: (string | undefined | null | false)[]): string {
-  return clsx(classes);
+export function cn(...cls: (string | false | undefined)[]): string {
+  return cls.filter(Boolean).join(" ");
 }

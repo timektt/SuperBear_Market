@@ -1,24 +1,18 @@
 import React from 'react';
 import { HiOutlineHeart, HiStar } from 'react-icons/hi2';
 import { motion } from 'framer-motion';
-
-interface Product {
-  id: number;
-  name: string;
-  price: number;
-  originalPrice?: number;
-  image: string;
-  rating: number;
-  reviews: number;
-  isNew?: boolean;
-  isOnSale?: boolean;
-}
+import { Product } from '../types';
+import { formatTHB } from '../utils/format';
+import { AddToCartButton } from './AddToCartButton';
 
 interface ProductCardProps {
   product: Product;
 }
 
 export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
+  const isNew = new Date(product.createdAt) > new Date(Date.now() - 30 * 24 * 60 * 60 * 1000); // 30 days
+  const isOnSale = product.salesCount > 1000; // Mock sale logic
+
   return (
     <motion.div
       className="group rounded-2xl overflow-hidden bg-[rgb(var(--card))] shadow-[0_8px_30px_var(--elev)] hover:shadow-[0_16px_40px_var(--elev)] transition-all duration-300"
@@ -39,12 +33,12 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         
         {/* Badges */}
         <div className="absolute top-3 left-3 flex flex-col gap-2">
-          {product.isNew && (
+          {isNew && (
             <span className="px-2 py-1 text-xs font-medium bg-[rgb(var(--acc-2))] text-white rounded">
               New
             </span>
           )}
-          {product.isOnSale && (
+          {isOnSale && (
             <span className="px-2 py-1 text-xs font-medium bg-red-500 text-white rounded">
               Sale
             </span>
@@ -82,30 +76,19 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             ))}
           </div>
           <span className="text-sm text-[rgb(var(--muted))] ml-1">
-            ({product.reviews})
+            ({product.salesCount})
           </span>
         </div>
 
         {/* Price */}
         <div className="flex items-center gap-2 mb-4">
-          <span className="text-lg font-semibold tracking-tight text-[rgb(var(--fg))]">
-            ${product.price}
+          <span className="text-lg font-semibold tracking-tight text-[rgb(var(--acc))]">
+            {formatTHB(product.priceSatang)}
           </span>
-          {product.originalPrice && (
-            <span className="text-sm text-[rgb(var(--muted))] line-through">
-              ${product.originalPrice}
-            </span>
-          )}
         </div>
 
         {/* Add to cart button */}
-        <motion.button
-          className="w-full py-2.5 px-4 border border-[rgb(var(--acc))] text-[rgb(var(--acc))] font-medium rounded-lg hover:bg-[rgb(var(--acc))] hover:text-white transition-all duration-300 focus-visible:ring-2 focus-visible:ring-[rgb(var(--acc))] focus-visible:ring-offset-2"
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
-        >
-          Add to Cart
-        </motion.button>
+        <AddToCartButton product={product} className="w-full" />
       </div>
     </motion.div>
   );

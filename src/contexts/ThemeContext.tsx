@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-
-type Theme = 'light' | 'dark' | 'system';
+import { Theme } from '../types';
+import { getItem, setItem } from '../utils/storage';
 
 interface ThemeContextType {
   theme: Theme;
@@ -24,8 +24,7 @@ interface ThemeProviderProps {
 
 export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
   const [theme, setTheme] = useState<Theme>(() => {
-    const stored = localStorage.getItem('theme') as Theme;
-    return stored || 'system';
+    return getItem<Theme>('sb_theme') || 'system';
   });
 
   const [actualTheme, setActualTheme] = useState<'light' | 'dark'>('light');
@@ -54,7 +53,7 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
   }, [theme]);
 
   useEffect(() => {
-    localStorage.setItem('theme', theme);
+    setItem('sb_theme', theme);
   }, [theme]);
 
   return (
