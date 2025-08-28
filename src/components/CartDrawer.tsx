@@ -1,11 +1,22 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { HiOutlineX, HiOutlineMinus, HiOutlinePlus, HiOutlineTrash } from 'react-icons/hi2';
+import { HiOutlineMinus, HiOutlinePlus, HiOutlineTrash, HiXMark, HiCheckCircle } from 'react-icons/hi2';
 import { useCart } from '../store/cart';
 import { formatTHB } from '../utils/format';
 
 export const CartDrawer: React.FC = () => {
-  const { items, isOpen, setIsOpen, setQty, removeItem, subtotal } = useCart();
+  const { items, isOpen, setIsOpen, setQty, removeItem, subtotal, clearAutoCloseTimeout } = useCart();
+  const [showAddedMessage, setShowAddedMessage] = useState(false);
+  const [previousItemCount, setPreviousItemCount] = useState(items.length);
+
+  useEffect(() => {
+    if (items.length > previousItemCount && isOpen) {
+      setShowAddedMessage(true);
+      const timer = setTimeout(() => setShowAddedMessage(false), 2000);
+      return () => clearTimeout(timer);
+    }
+    setPreviousItemCount(items.length);
+  }, [items.length, isOpen, previousItemCount]);
 
   const handleBackdropClick = (e: React.MouseEvent) => {
     if (e.target === e.currentTarget) {
@@ -46,18 +57,36 @@ export const CartDrawer: React.FC = () => {
             animate={{ x: 0 }}
             exit={{ x: '100%' }}
             transition={{ duration: 0.3, ease: 'easeOut' }}
+            onMouseEnter={clearAutoCloseTimeout}
+            onFocus={clearAutoCloseTimeout}
           >
             {/* Header */}
             <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-800">
-              <h2 id="cart-title" className="text-lg font-semibold text-[rgb(var(--fg))]">
-                Shopping Cart ({items.length})
-              </h2>
+              <div className="flex items-center gap-2">
+                <h2 id="cart-title" className="text-lg font-semibold text-[rgb(var(--fg))]">
+                  Shopping Cart ({items.length})
+                </h2>
+                <AnimatePresence>
+                  {showAddedMessage && (
+                    <motion.div
+                      className="flex items-center gap-1 text-green-600 dark:text-green-400"
+                      initial={{ opacity: 0, scale: 0.8 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.8 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <HiCheckCircle className="w-4 h-4" />
+                      <span className="text-sm font-medium">Added!</span>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
               <button
                 onClick={() => setIsOpen(false)}
                 className="p-2 rounded-lg text-[rgb(var(--muted))] hover:text-[rgb(var(--fg))] hover:bg-[rgb(var(--card))] transition-colors"
                 aria-label="Close cart"
               >
-                <HiOutlineX className="w-5 h-5" />
+                <HiXMark className="w-5 h-5" />
               </button>
             </div>
 
@@ -74,7 +103,19 @@ export const CartDrawer: React.FC = () => {
                   </button>
                 </div>
               ) : (
-                <div className="space-y-4">
+                <>
+                  {/* Auto-close notification */}
+                  <motion.div
+                    className="mb-4 p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg"
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <p className="text-sm text-blue-700 dark:text-blue-300 text-center">
+                      🛒 Cart will auto-close in 3 seconds. Hover to keep it open!
+                    </p>
+                  </motion.div>
+                  <div className="space-y-4">
                   {items.map((item) => (
                     <div key={item.productId} className="flex gap-4 p-4 bg-[rgb(var(--card))] rounded-lg">
                       <img
@@ -118,7 +159,8 @@ export const CartDrawer: React.FC = () => {
                       </div>
                     </div>
                   ))}
-                </div>
+                  </div>
+                </>
               )}
             </div>
 

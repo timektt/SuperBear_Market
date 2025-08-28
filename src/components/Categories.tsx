@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Category } from '../types';
+import { LazyImage } from './LazyImage';
 import { Section } from './Section';
 
 interface CategoriesProps {
@@ -14,7 +15,7 @@ export const Categories: React.FC<CategoriesProps> = ({ categories }) => {
       subtitle="Discover our curated collections across different categories"
       className="bg-[rgb(var(--card))]"
     >
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-5">
+      <div className="grid-mobile">
         {categories.map((category, index) => (
           <motion.div
             key={category.id}
@@ -25,11 +26,10 @@ export const Categories: React.FC<CategoriesProps> = ({ categories }) => {
             whileHover={{ y: -4, scale: 1.02 }}
           >
             <div className="aspect-square overflow-hidden">
-              <img
+              <LazyImage
                 src={category.image}
                 alt={category.name}
-                className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-                loading="lazy"
+                className="w-full h-full transition-transform duration-300 group-hover:scale-105"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
             </div>

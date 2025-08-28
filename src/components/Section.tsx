@@ -1,4 +1,6 @@
 import React from 'react';
+import { motion, useInView } from 'framer-motion';
+import { useRef } from 'react';
 import { cn } from '../utils/cn';
 
 interface SectionProps {
@@ -14,25 +16,55 @@ export const Section: React.FC<SectionProps> = ({
   children, 
   className 
 }) => {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: '-100px' });
+
   return (
-    <section className={cn('py-12 md:py-16', className)}>
+    <motion.section 
+      ref={ref}
+      className={cn('py-12 md:py-16', className)}
+      initial={{ opacity: 0, y: 50 }}
+      animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
+      transition={{ duration: 0.6, ease: 'easeOut' }}
+    >
       <div className="container-app">
         {(title || subtitle) && (
-          <div className="text-center mb-8 md:mb-12">
+          <motion.div 
+            className="text-center mb-8 md:mb-12"
+            initial={{ opacity: 0, y: 30 }}
+            animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+            transition={{ duration: 0.6, delay: 0.2, ease: 'easeOut' }}
+          >
             {title && (
-              <h2 className="text-xl md:text-2xl font-semibold tracking-[-0.01em] text-[rgb(var(--fg))] mb-4">
+              <motion.h2 
+                className="text-xl md:text-2xl font-semibold tracking-[-0.01em] text-[rgb(var(--fg))] mb-4"
+                initial={{ opacity: 0, y: 20 }}
+                animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+                transition={{ duration: 0.6, delay: 0.3, ease: 'easeOut' }}
+              >
                 {title}
-              </h2>
+              </motion.h2>
             )}
             {subtitle && (
-              <p className="text-base leading-relaxed text-[rgb(var(--muted))] max-w-2xl mx-auto">
+              <motion.p 
+                className="text-base leading-relaxed text-[rgb(var(--muted))] max-w-2xl mx-auto"
+                initial={{ opacity: 0, y: 20 }}
+                animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+                transition={{ duration: 0.6, delay: 0.4, ease: 'easeOut' }}
+              >
                 {subtitle}
-              </p>
+              </motion.p>
             )}
-          </div>
+          </motion.div>
         )}
-        {children}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+          transition={{ duration: 0.6, delay: 0.5, ease: 'easeOut' }}
+        >
+          {children}
+        </motion.div>
       </div>
-    </section>
+    </motion.section>
   );
 };

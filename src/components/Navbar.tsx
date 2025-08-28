@@ -29,15 +29,22 @@ export const Navbar: React.FC = () => {
       animate={{ y: 0 }}
       transition={{ duration: 0.5, ease: 'easeOut' }}
     >
-      <nav className="container-app">
-        <div className="flex items-center justify-between h-16">
+      <nav className="container-app safe-area-inset">
+        <div className="flex items-center justify-between h-16 min-h-[64px]">
           {/* Left - Mobile menu */}
-          <button 
-            className="md:hidden p-2 rounded-lg text-[rgb(var(--fg))] hover:bg-[rgb(var(--card))] focus-visible:ring-2 focus-visible:ring-[rgb(var(--acc))]"
+          <motion.button 
+            className="md:hidden p-2 rounded-lg text-[rgb(var(--fg))] hover:bg-[rgb(var(--card))] focus-visible:ring-2 focus-visible:ring-[rgb(var(--acc))] transition-colors duration-200"
+            whileHover={{ scale: 1.05, backgroundColor: 'rgb(var(--card))' }}
+            whileTap={{ scale: 0.95 }}
             aria-label="Open menu"
           >
-            <HiOutlineBars3 className="w-6 h-6" />
-          </button>
+            <motion.div
+              whileHover={{ rotate: 90 }}
+              transition={{ duration: 0.2 }}
+            >
+              <HiOutlineBars3 className="w-6 h-6" />
+            </motion.div>
+          </motion.button>
 
           {/* Center - Logo */}
           <motion.div 
@@ -65,31 +72,47 @@ export const Navbar: React.FC = () => {
           {/* Right - Actions */}
           <div className="flex items-center gap-2">
             <motion.button 
-              className="p-2 rounded-lg text-[rgb(var(--fg))] hover:bg-[rgb(var(--card))] focus-visible:ring-2 focus-visible:ring-[rgb(var(--acc))] hidden sm:block"
-              whileHover={{ scale: 1.05 }}
+              className="p-2 rounded-lg text-[rgb(var(--fg))] hover:bg-[rgb(var(--card))] focus-visible:ring-2 focus-visible:ring-[rgb(var(--acc))] hidden sm:block transition-colors duration-200"
+              whileHover={{ scale: 1.05, backgroundColor: 'rgb(var(--card))' }}
               whileTap={{ scale: 0.95 }}
               aria-label="Search"
             >
-              <HiOutlineMagnifyingGlass className="w-5 h-5" />
+              <motion.div
+                whileHover={{ rotate: 15 }}
+                transition={{ duration: 0.2 }}
+              >
+                <HiOutlineMagnifyingGlass className="w-5 h-5" />
+              </motion.div>
             </motion.button>
 
             <motion.button 
-              className="p-2 rounded-lg text-[rgb(var(--fg))] hover:bg-[rgb(var(--card))] focus-visible:ring-2 focus-visible:ring-[rgb(var(--acc))]"
-              whileHover={{ scale: 1.05 }}
+              className="p-2 rounded-lg text-[rgb(var(--fg))] hover:bg-[rgb(var(--card))] focus-visible:ring-2 focus-visible:ring-[rgb(var(--acc))] transition-colors duration-200"
+              whileHover={{ scale: 1.05, backgroundColor: 'rgb(var(--card))' }}
               whileTap={{ scale: 0.95 }}
               aria-label="Wishlist"
             >
-              <HiOutlineHeart className="w-5 h-5" />
+              <motion.div
+                whileHover={{ scale: 1.2, rotate: [0, -10, 10, 0] }}
+                transition={{ duration: 0.3 }}
+              >
+                <HiOutlineHeart className="w-5 h-5" />
+              </motion.div>
             </motion.button>
 
             <motion.button 
               onClick={() => setIsOpen(true)}
-              className="p-2 rounded-lg text-[rgb(var(--fg))] hover:bg-[rgb(var(--card))] focus-visible:ring-2 focus-visible:ring-[rgb(var(--acc))] relative"
-              whileHover={{ scale: 1.05 }}
+              className="p-2 rounded-lg text-[rgb(var(--fg))] hover:bg-[rgb(var(--card))] focus-visible:ring-2 focus-visible:ring-[rgb(var(--acc))] relative transition-colors duration-200"
+              whileHover={{ scale: 1.05, backgroundColor: 'rgb(var(--card))' }}
               whileTap={{ scale: 0.95 }}
               aria-label={`Shopping cart with ${cartCount} items`}
             >
-              <HiOutlineShoppingBag className="w-5 h-5" />
+              <motion.div
+                whileHover={{ y: -2 }}
+                animate={cartCount > 0 ? { y: [0, -2, 0] } : {}}
+                transition={{ duration: 0.2 }}
+              >
+                <HiOutlineShoppingBag className="w-5 h-5" />
+              </motion.div>
               <AnimatePresence>
                 {cartCount > 0 && (
                   <motion.span

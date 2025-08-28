@@ -5,12 +5,14 @@ import { getItem, setItem } from '../utils/storage';
 interface CartState {
   items: CartItem[];
   isOpen: boolean;
+  autoCloseTimeout: NodeJS.Timeout | null;
   addItem: (product: Product, qty?: number) => void;
   removeItem: (productId: string) => void;
   setQty: (productId: string, qty: number) => void;
   clear: () => void;
   subtotal: () => number;
   setIsOpen: (open: boolean) => void;
+  clearAutoCloseTimeout: () => void;
 }
 
 const CART_STORAGE_KEY = 'sb_cart';
@@ -18,9 +20,15 @@ const CART_STORAGE_KEY = 'sb_cart';
 export const useCart = create<CartState>((set, get) => ({
   items: getItem<CartItem[]>(CART_STORAGE_KEY) || [],
   isOpen: false,
+  autoCloseTimeout: null,
 
   addItem: (product: Product, qty = 1) => {
     set((state) => {
+      // Clear existing timeout
+      if (state.autoCloseTimeout) {
+        clearTimeout(state.autoCloseTimeout);
+      }
+      
       const existingItem = state.items.find(item => item.productId === product.id);
       
       let newItems: CartItem[];
@@ -42,7 +50,13 @@ export const useCart = create<CartState>((set, get) => ({
       }
       
       setItem(CART_STORAGE_KEY, newItems);
-      return { items: newItems, isOpen: true };
+      
+      // Set auto-close timeout (3 seconds)
+      const timeout = setTimeout(() => {
+        set({ isOpen: false, autoCloseTimeout: null });
+      }, 3000);
+      
+      return { items: newItems, isOpen: true, autoCloseTimeout: timeout };
     });
   },
 
@@ -79,6 +93,21 @@ export const useCart = create<CartState>((set, get) => ({
   },
 
   setIsOpen: (open: boolean) => {
-    set({ isOpen: open });
+    set((state) => {
+      // Clear timeout when manually opening/closing
+      if (state.autoCloseTimeout) {
+        clearTimeout(state.autoCloseTimeout);
+      }
+      return { isOpen: open, autoCloseTimeout: null };
+    });
+  },
+
+  clearAutoCloseTimeout: () => {
+    set((state) => {
+      if (state.autoCloseTimeout) {
+        clearTimeout(state.autoCloseTimeout);
+      }
+      return { autoCloseTimeout: null };
+    });
   },
 }));

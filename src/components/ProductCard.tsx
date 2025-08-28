@@ -1,33 +1,43 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { HiOutlineHeart, HiStar } from 'react-icons/hi2';
 import { motion } from 'framer-motion';
 import { Product } from '../types';
 import { formatTHB } from '../utils/format';
 import { AddToCartButton } from './AddToCartButton';
+import { LazyImage } from './LazyImage';
 
 interface ProductCardProps {
   product: Product;
 }
 
-export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
+const ProductCardComponent: React.FC<ProductCardProps> = ({ product }) => {
   const isNew = new Date(product.createdAt) > new Date(Date.now() - 30 * 24 * 60 * 60 * 1000); // 30 days
   const isOnSale = product.salesCount > 1000; // Mock sale logic
 
   return (
     <motion.div
-      className="group rounded-2xl overflow-hidden bg-[rgb(var(--card))] shadow-[0_8px_30px_var(--elev)] hover:shadow-[0_16px_40px_var(--elev)] transition-all duration-300"
+      className="group rounded-2xl overflow-hidden bg-[rgb(var(--card))] shadow-[0_8px_30px_var(--elev)] hover:shadow-[0_20px_50px_var(--elev)] transition-all duration-500 cursor-pointer"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, ease: 'easeOut' }}
-      whileHover={{ y: -4 }}
+      whileHover={{ 
+        y: -8,
+        scale: 1.02,
+        transition: { duration: 0.3, ease: 'easeOut' }
+      }}
+      whileTap={{ scale: 0.98 }}
     >
       <div className="relative">
-        <div className="aspect-square overflow-hidden bg-gray-100 dark:bg-gray-800">
-          <motion.img
+        <div className="aspect-square overflow-hidden bg-gray-100 dark:bg-gray-800 relative">
+          <LazyImage
             src={product.image}
             alt={product.name}
-            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"
-            loading="lazy"
+            className="w-full h-full"
+          />
+          <motion.div 
+            className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300"
+            initial={{ opacity: 0 }}
+            whileHover={{ opacity: 1 }}
           />
         </div>
         
@@ -47,12 +57,23 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
 
         {/* Wishlist button */}
         <motion.button
-          className="absolute top-3 right-3 p-2 rounded-full bg-white/80 dark:bg-black/80 text-gray-700 dark:text-gray-300 hover:bg-white dark:hover:bg-black transition-colors focus-visible:ring-2 focus-visible:ring-[rgb(var(--acc))]"
-          whileHover={{ scale: 1.1 }}
+          className="absolute top-3 right-3 p-2 rounded-full bg-white/80 dark:bg-black/80 text-gray-700 dark:text-gray-300 hover:bg-white dark:hover:bg-black hover:text-red-500 transition-all duration-300 focus-visible:ring-2 focus-visible:ring-[rgb(var(--acc))] backdrop-blur-sm"
+          whileHover={{ 
+            scale: 1.15,
+            rotate: [0, -10, 10, 0],
+            transition: { duration: 0.3 }
+          }}
           whileTap={{ scale: 0.9 }}
           aria-label="Add to wishlist"
         >
-          <HiOutlineHeart className="w-5 h-5" />
+          <motion.div
+            whileHover={{ 
+              scale: 1.2,
+              transition: { duration: 0.2 }
+            }}
+          >
+            <HiOutlineHeart className="w-5 h-5" />
+          </motion.div>
         </motion.button>
       </div>
 
@@ -93,3 +114,9 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     </motion.div>
   );
 };
+
+export const ProductCard = memo(ProductCardComponent, (prevProps, nextProps) => {
+  return prevProps.product.id === nextProps.product.id &&
+         prevProps.product.priceSatang === nextProps.product.priceSatang &&
+         prevProps.product.name === nextProps.product.name;
+});
