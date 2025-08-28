@@ -1,0 +1,95 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Design tokens - Light theme (default) */
+:root {
+  --bg: 255 255 255;        /* white */
+  --fg: 17 24 39;           /* slate-900 */
+  --muted: 107 114 128;     /* gray-500 */
+  --card: 249 250 251;      /* gray-50 */
+  --elev: 0 0 0 / 0.06;     /* shadow color */
+  --acc: 0 122 255;         /* cobalt blue */
+  --acc-2: 16 185 129;      /* emerald */
+}
+
+/* Design tokens - Dark theme */
+.dark {
+  --bg: 10 10 12;
+  --fg: 229 231 235;        /* gray-200 */
+  --muted: 148 163 184;     /* slate-400 */
+  --card: 17 17 20;
+  --elev: 0 0 0 / 0.38;
+  --acc: 59 130 246;        /* soft blue */
+  --acc-2: 34 197 94;       /* emerald */
+}
+
+/* Base styles */
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  min-height: 100vh;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Remove default margins and paddings */
+* {
+  margin: 0;
+  padding: 0;
+}
+
+/* Focus styles for accessibility */
+*:focus-visible {
+  outline: 2px solid rgb(var(--acc));
+  outline-offset: 2px;
+}
+
+/* Smooth transitions for theme changes */
+* {
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+/* Reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Utility classes */
+.container-app {
+  @apply mx-auto max-w-[1200px] px-4 md:px-6;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
